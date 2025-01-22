@@ -1,0 +1,33 @@
+{
+  "scripts": {
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "lint": "npx eslint 'src/**/*.ts'",
+    "lint:fix": "npx eslint --fix 'src/**/*.ts'"
+  },
+  "name": "app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.18.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.7",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "eslint": "^9.18.0",
+    "globals": "^15.14.0",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-config-prettier": "^8.0.0",
+    "prettier": "^2.0.0"
+  }
+}
