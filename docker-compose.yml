@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: myapp-app
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    command: sh -c "while ! nc -z myapp-mysql 3306; do sleep 1; done && /usr/bin/tini -- npm run dev"
+    environment:
+      MYSQL_HOST: myapp-mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: myappuser
+      MYSQL_PASSWORD: myapppassword
+      MYSQL_DATABASE: myappdb
+    networks:
+      - myapp-network
+  redis:
+    container_name: myapp-redis
+    image: "redis:latest"
+    networks:
+      - myapp-network
+  mysql:
+    container_name: myapp-mysql
+    image: "mysql:8.0"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: myappdb
+      MYSQL_USER: myappuser
+      MYSQL_PASSWORD: myapppassword
+    ports:
+      - "3306:3306"
+    networks:
+      - myapp-network
+
+networks:
+  myapp-network:
+    driver: bridge

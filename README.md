@@ -32,6 +32,12 @@ To fix linting issues, run:
 npm run lint:fix
 ```
 
+To set up the initial database in the app container, run:
+
+```bash
+npm run migration:run
+```
+
 ## License
 
 This project is licensed under the ISC License.
