@@ -10,12 +10,18 @@ services:
     ports:
       - "3000:3000"
     command: sh -c "while ! nc -z myapp-mysql 3306; do sleep 1; done && /usr/bin/tini -- npm run dev"
+    env_file:
+      - .env
     environment:
       MYSQL_HOST: myapp-mysql
       MYSQL_PORT: 3306
       MYSQL_USER: myappuser
       MYSQL_PASSWORD: myapppassword
       MYSQL_DATABASE: myappdb
+      JWT_PUBLIC_KEY_BASE64: ${JWT_PUBLIC_KEY_BASE64}
+      JWT_PRIVATE_KEY_BASE64: ${JWT_PRIVATE_KEY_BASE64}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
     networks:
       - myapp-network
   redis:
