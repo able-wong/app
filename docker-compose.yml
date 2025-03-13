@@ -9,7 +9,7 @@ services:
       - /usr/src/app/node_modules
     ports:
       - "3000:3000"
-    command: sh -c "while ! nc -z myapp-mysql 3306; do sleep 1; done && /usr/bin/tini -- npm run dev"
+    command: /usr/bin/tini -- sh -c 'while ! nc -z myapp-mysql 3306; do sleep 1; done && npm run migration:run && npm run dev'
     env_file:
       - .env
     environment:
