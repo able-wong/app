@@ -85,14 +85,16 @@ export const updateTeamMember = async (req: Request, res: Response) => {
     res.status(404).json({ message: 'Team Member not found' });
     return;
   }
-  teamMemberRepository.merge(teamMember, plainToClass(TeamMemberDto, req.body));
-  const errors = await validate(teamMember, {
+  const teamMemberDto = plainToClass(TeamMemberDto, req.body);
+  const errors = await validate(teamMemberDto, {
     skipMissingProperties: true,
   });
   if (errors.length > 0) {
     res.status(400).json({ message: 'Invalid data' });
     return;
   }
+
+  teamMemberRepository.merge(teamMember, teamMemberDto);
   const result = await teamMemberRepository.save(teamMember);
   res.json(result);
 };

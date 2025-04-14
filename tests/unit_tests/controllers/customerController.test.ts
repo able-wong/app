@@ -157,7 +157,9 @@ describe('Customer Controller', () => {
     await updateCustomer(req, res);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Invalid data' });
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'Invalid data' }),
+    );
   });
 
   test('updateCustomer should return 400 if an exception is thrown', async () => {
@@ -171,8 +173,10 @@ describe('Customer Controller', () => {
 
     await updateCustomer(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Invalid data' });
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'Internal server error' }),
+    );
   });
 
   test('updateCustomer should return 404 if customer not found', async () => {

@@ -74,13 +74,16 @@ export const updateLocation = async (req: Request, res: Response) => {
     return;
   }
 
-  locationRepository.merge(location, plainToClass(LocationDto, req.body));
-  const errors = await validate(location, { skipMissingProperties: true });
+  const locationDto = plainToClass(LocationDto, req.body);
+  const errors = await validate(locationDto, {
+    skipMissingProperties: true,
+  });
   if (errors.length > 0) {
     res.status(400).json({ message: 'Invalid data' });
     return;
   }
 
+  locationRepository.merge(location, locationDto);
   const result = await locationRepository.save(location);
   res.json(result);
 };

@@ -206,26 +206,7 @@ describe('Location Controller', () => {
   });
 
   test('updateLocation should return 400 for invalid data', async () => {
-    const req = mockRequest(
-      { id: '1', customerId: '1' },
-      { invalidField: 'Invalid Data' },
-    );
-    const res = mockResponse();
-    const location = { id: 1, name: 'Location 1' };
-    (getCustomerRecord as jest.Mock).mockResolvedValue({ id: 1 });
-    locationRepository.findOne.mockResolvedValue(location);
-
-    await updateLocation(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Invalid data' });
-  });
-
-  test('updateLocation should return 400 for invalid data', async () => {
-    const req = mockRequest(
-      { id: '1', customerId: '1' },
-      { invalidField: 'Invalid Data' },
-    );
+    const req = mockRequest({ id: '1', customerId: '1' }, { name: '' });
     const res = mockResponse();
     const location = { id: 1, name: 'Location 1' };
     (getCustomerRecord as jest.Mock).mockResolvedValue({ id: 1 });

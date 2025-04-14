@@ -70,14 +70,16 @@ export const createService = async (req: Request, res: Response) => {
     res.status(404).json({ message: 'Location not found' });
     return;
   }
-  const newService = new Service();
-  newService.location = location;
-  getRepository().merge(newService, plainToClass(ServiceDto, req.body));
-  const errors = await validate(newService, { skipMissingProperties: true });
+  const serviceDto = plainToClass(ServiceDto, req.body);
+  const errors = await validate(serviceDto, { skipMissingProperties: true });
   if (errors.length > 0) {
     res.status(400).json({ message: 'Invalid data' });
     return;
   }
+
+  const newService = new Service();
+  newService.location = location;
+  getRepository().merge(newService, serviceDto);
   const result = await getRepository().save(newService);
   res.json(result);
 };
@@ -102,12 +104,15 @@ export const updateService = async (req: Request, res: Response) => {
     res.status(404).json({ message: 'Service not found' });
     return;
   }
-  serviceRepository.merge(service, plainToClass(ServiceDto, req.body));
-  const errors = await validate(service, { skipMissingProperties: true });
+
+  const serviceDto = plainToClass(ServiceDto, req.body);
+  const errors = await validate(serviceDto, { skipMissingProperties: true });
   if (errors.length > 0) {
     res.status(400).json({ message: 'Invalid data' });
     return;
   }
+
+  serviceRepository.merge(service, serviceDto);
   const result = await serviceRepository.save(service);
   res.json(result);
 };

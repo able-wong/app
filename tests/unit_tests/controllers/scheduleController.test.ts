@@ -332,7 +332,7 @@ describe('Schedule Controller', () => {
   test('updateSchedule should return 400 for invalid data', async () => {
     const req = mockRequest(
       { customerId: '1', locationId: '1', id: '1' },
-      { date: 'Invalid Date' },
+      { date: 'invalid date' },
     );
     const res = mockResponse();
     const schedule = { id: 1, date: '2023-10-09', time_period: '09:00-11:00' };

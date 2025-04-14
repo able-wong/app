@@ -1,15 +1,13 @@
 version: '3.8'
 
 services:
-  app:
-    container_name: myapp-app
+  test:
+    container_name: myapp-test
     build: .
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    ports:
-      - "3000:3000"
-    command: /usr/bin/tini -- sh -c 'while ! nc -z myapp-mysql 3306; do sleep 1; done && npm run migration:run && npm run dev'
+    command: sh -c 'while ! nc -z myapp-test-mysql 3306; do sleep 1; done && npm run migration:run && npm run test:integration'
     env_file:
       - .env
     environment:
@@ -23,14 +21,10 @@ services:
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
     networks:
-      - myapp-network
-  redis:
-    container_name: myapp-redis
-    image: "redis:latest"
-    networks:
-      - myapp-network
+      - myapp-test-network
+
   mysql:
-    container_name: myapp-mysql
+    container_name: myapp-test-mysql
     image: "mysql:8.0"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -38,10 +32,10 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
-      - myapp-network
+      - myapp-test-network
 
 networks:
-  myapp-network:
+  myapp-test-network:
     driver: bridge

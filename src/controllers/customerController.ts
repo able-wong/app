@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { CustomerDto } from '../dto/CustomerDto';
+import { Location } from '../entity/Location';
 
 const getRepository = function (): Repository<Customer> {
   return AppDataSource.getRepository<Customer>(Customer);
@@ -35,34 +36,48 @@ export const createCustomer = async (req: Request, res: Response) => {
       res.status(400).json({ message: 'Invalid data' });
       return;
     }
-    const result = await customerRepository.save(newCustomer);
-    res.json(result);
+
+    // Create a new Customer entity and set its properties
+    const customer = new Customer();
+    customer.name = newCustomer.name;
+
+    const result = await customerRepository.save(customer);
+    res.status(200).json(result);
   } catch {
     res.status(400).json({ message: 'Invalid data' });
   }
 };
 
 export const updateCustomer = async (req: Request, res: Response) => {
-  const customerRepository = getRepository();
-  const customer = await customerRepository.findOneBy({
-    id: parseInt(req.params.id),
-  });
+  try {
+    const customerRepository = getRepository();
+    const customer = await customerRepository.findOneBy({
+      id: parseInt(req.params.id),
+    });
 
-  if (customer) {
-    try {
-      customerRepository.merge(customer, plainToClass(CustomerDto, req.body));
-      const errors = await validate(customer, { skipMissingProperties: true });
-      if (errors.length > 0) {
-        res.status(400).json({ message: 'Invalid data' });
-        return;
-      }
-      const result = await customerRepository.save(customer);
-      res.json(result);
-    } catch {
-      res.status(400).json({ message: 'Invalid data' });
+    if (!customer) {
+      res.status(404).json({ message: 'Customer not found' });
+      return;
     }
-  } else {
-    res.status(404).json({ message: 'Customer not found' });
+
+    const customerDto = plainToClass(CustomerDto, req.body);
+    const errors = await validate(customerDto, { skipMissingProperties: true });
+
+    if (errors.length > 0) {
+      res.status(400).json({
+        message: 'Invalid data',
+        errors: errors.map((error) => Object.values(error.constraints || {})),
+      });
+      return;
+    }
+
+    customerRepository.merge(customer, customerDto);
+    const result = await customerRepository.save(customer);
+    res.json(result);
+    return;
+  } catch {
+    res.status(500).json({ message: 'Internal server error' });
+    return;
   }
 };
 
@@ -71,6 +86,11 @@ export const deleteCustomer = async (req: Request, res: Response) => {
     id: parseInt(req.params.id),
   });
   if (customer) {
+    // First delete all related locations
+    const locationRepository = AppDataSource.getRepository(Location);
+    await locationRepository.delete({ customer: { id: customer.id } });
+
+    // Then delete the customer
     const result = await getRepository().delete(req.params.id);
     res.json(result);
   } else {

@@ -46,7 +46,7 @@ export class CreateSchema1633024800000 implements MigrationInterface {
           },
           { name: 'customer_id', type: 'int' },
           { name: 'name', type: 'varchar' },
-          { name: 'address', type: 'varchar' },
+          { name: 'address', type: 'varchar', isNullable: true },
           {
             name: 'created_at',
             type: 'timestamp',

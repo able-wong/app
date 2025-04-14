@@ -148,10 +148,7 @@ describe('Service Controller', () => {
   });
 
   test('createService should return 400 if data is invalid', async () => {
-    const req = mockRequest(
-      { customerId: '1', locationId: '1' },
-      { created_at: 'Invalid Data' },
-    );
+    const req = mockRequest({ customerId: '1', locationId: '1' }, { name: '' });
     const res = mockResponse();
     (getLocationRecord as jest.Mock).mockResolvedValue({ id: 1 });
 
@@ -221,7 +218,7 @@ describe('Service Controller', () => {
   test('updateService should return 400 if data is invalid', async () => {
     const req = mockRequest(
       { customerId: '1', locationId: '1', id: '1' },
-      { date: 'Invalid Date' },
+      { name: '' },
     );
     const res = mockResponse();
     const service = { id: 1, date: '2023-10-09', time_period: '09:00-11:00' };

@@ -134,12 +134,15 @@ export const updateSchedule = async (req: Request, res: Response) => {
     res.status(400).json({ message: 'Invalid service, user, or team member' });
     return;
   }
-  scheduleRepository.merge(schedule, plainToClass(ScheduleDto, req.body));
-  const errors = await validate(schedule, { skipMissingProperties: true });
+
+  const scheduleDto = plainToClass(ScheduleDto, req.body);
+  const errors = await validate(scheduleDto, { skipMissingProperties: true });
   if (errors.length > 0) {
     res.status(400).json({ message: 'Invalid data' });
     return;
   }
+
+  scheduleRepository.merge(schedule, scheduleDto);
   const result = await scheduleRepository.save(schedule);
   res.json(result);
 };

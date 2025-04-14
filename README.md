@@ -63,6 +63,14 @@ To run tests, run:
 npm test
 ```
 
+To run integration tests (requires Docker as it needs database access):
+
+```bash
+npm run test:integration:docker
+```
+
+This will set up a test database in a Docker container and run the integration tests against it.
+
 ## License
 
 This project is licensed under the ISC License.
